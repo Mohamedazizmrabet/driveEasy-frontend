@@ -1,0 +1,114 @@
+<h1>Nouvelle location</h1>
+
+<p class="steps">
+  @for (titre of ['Client', 'Période', 'Véhicule', 'Prix', 'Confirmation']; track titre; let i = $index) {
+    <span [class.step-active]="etape() === i + 1">{{ i + 1 }}. {{ titre }}</span>
+    @if (i < 4) { → }
+  }
+</p>
+
+@if (erreur()) {
+  <div class="error">{{ erreur() }}</div>
+}
+
+<!-- Étape 1 : choisir le client -->
+@if (etape() === 1) {
+  <div class="box">
+    <h2>1. Choisir le client</h2>
+    <table>
+      <thead><tr><th>Nom</th><th>CIN</th><th>Catégorie</th><th>Permis</th><th></th></tr></thead>
+      <tbody>
+        @for (c of clients(); track c.id) {
+          <tr>
+            <td>{{ c.prenom }} {{ c.nom }}</td>
+            <td>{{ c.cin }}</td>
+            <td><span class="badge badge-{{ c.categorieClient }}">{{ c.categorieClient }}</span></td>
+            <td>{{ c.permisExpire ? 'Expiré' : 'Valide' }}</td>
+            <td><button (click)="choisirClient(c)">Choisir</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<!-- Étape 2 : choisir la période -->
+@if (etape() === 2) {
+  <div class="box">
+    <h2>2. Période de location</h2>
+    <p>Client : <b>{{ clientChoisi?.prenom }} {{ clientChoisi?.nom }}</b></p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date de début</label>
+        <input type="date" [(ngModel)]="dateDebut" [min]="aujourdhui" />
+      </div>
+      <div class="form-group">
+        <label>Date de fin</label>
+        <input type="date" [(ngModel)]="dateFin" [min]="dateDebut || aujourdhui" />
+      </div>
+    </div>
+    <button class="btn-light" (click)="precedent()">← Précédent</button>
+    <button (click)="validerPeriode()">Voir les véhicules disponibles →</button>
+  </div>
+}
+
+<!-- Étape 3 : choisir un véhicule disponible -->
+@if (etape() === 3) {
+  <div class="box">
+    <h2>3. Véhicules disponibles du {{ dateDebut }} au {{ dateFin }}</h2>
+    <table>
+      <thead><tr><th>Véhicule</th><th>Immatriculation</th><th>Catégorie</th><th>Prix / jour</th><th></th></tr></thead>
+      <tbody>
+        @for (v of vehiculesDisponibles(); track v.id) {
+          <tr>
+            <td>{{ v.marque }} {{ v.modele }}</td>
+            <td>{{ v.immatriculation }}</td>
+            <td>{{ v.categorie }}</td>
+            <td>{{ v.prixJournalier }} DT</td>
+            <td><button (click)="choisirVehicule(v)">Choisir</button></td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5">Aucun véhicule disponible sur cette période.</td></tr>
+        }
+      </tbody>
+    </table>
+    <br />
+    <button class="btn-light" (click)="precedent()">← Précédent</button>
+  </div>
+}
+
+<!-- Étape 4 : simulation du prix -->
+@if (etape() === 4 && simulation()) {
+  <div class="box">
+    <h2>4. Simulation du prix</h2>
+    <table>
+      <tr><td>Client</td><td>{{ clientChoisi?.prenom }} {{ clientChoisi?.nom }} ({{ simulation().categorieClient }})</td></tr>
+      <tr><td>Véhicule</td><td>{{ vehiculeChoisi?.marque }} {{ vehiculeChoisi?.modele }}</td></tr>
+      <tr><td>Période</td><td>{{ dateDebut }} → {{ dateFin }} ({{ simulation().nombreJours }} jours)</td></tr>
+      <tr><td>Prix journalier × coefficient catégorie</td><td>{{ simulation().prixJournalier }} × {{ simulation().coefficientCategorie }} = {{ simulation().prixJournalierApplique | number: '1.2-2' }} DT</td></tr>
+      <tr><td>Montant brut</td><td>{{ simulation().montantBrut | number: '1.2-2' }} DT</td></tr>
+      <tr><td>Remise fidélité ({{ simulation().tauxRemise * 100 }} %)</td><td>- {{ simulation().remise | number: '1.2-2' }} DT</td></tr>
+      <tr><th>Total</th><th>{{ simulation().montantTotal | number: '1.2-2' }} DT</th></tr>
+    </table>
+
+    @if (!simulation().clientEligible) {
+      <div class="error">Client non éligible : {{ simulation().motifsIneligibilite.join(' ; ') }}</div>
+    }
+    @if (!simulation().vehiculeDisponible) {
+      <div class="error">{{ simulation().motifIndisponibilite }}</div>
+    }
+    <br />
+    <button class="btn-light" (click)="precedent()">← Précédent</button>
+    <button [disabled]="!simulation().clientEligible || !simulation().vehiculeDisponible" (click)="confirmer()">Confirmer la réservation</button>
+  </div>
+}
+
+<!-- Étape 5 : terminé -->
+@if (etape() === 5) {
+  <div class="success">
+    ✔ Réservation enregistrée pour {{ clientChoisi?.prenom }} {{ clientChoisi?.nom }} :
+    {{ vehiculeChoisi?.marque }} {{ vehiculeChoisi?.modele }} du {{ dateDebut }} au {{ dateFin }},
+    total {{ simulation()?.montantTotal | number: '1.2-2' }} DT.
+  </div>
+  <button (click)="allerAuxLocations()">Voir les locations</button>
+}

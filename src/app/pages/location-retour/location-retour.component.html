@@ -1,0 +1,56 @@
+<a class="no-print" routerLink="/locations">← Retour aux locations</a>
+<h1>Retour du véhicule</h1>
+
+@if (erreur()) {
+  <div class="error">{{ erreur() }}</div>
+}
+
+@if (detail() && !resultat()) {
+  <div class="box">
+    <p><b>Location n° {{ detail().location.id }}</b> ({{ detail().location.statut }})</p>
+    <p>Client : {{ detail().client?.prenom }} {{ detail().client?.nom }}</p>
+    <p>Véhicule : {{ detail().vehicule?.marque }} {{ detail().vehicule?.modele }} ({{ detail().vehicule?.immatriculation }})</p>
+    <p>Du {{ detail().location.dateDebut }} au {{ detail().location.dateFinPrevue }} (prévu)</p>
+    <p>Kilométrage au départ : {{ detail().location.kmDepart }} km</p>
+  </div>
+
+  <div class="box">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Kilométrage au retour</label>
+        <input type="number" [(ngModel)]="kmRetour" />
+      </div>
+      <div class="form-group">
+        <label>Date de retour</label>
+        <input type="date" [(ngModel)]="dateRetour" />
+      </div>
+    </div>
+
+    <p>Jours de retard : <b>{{ joursDeRetard() }}</b></p>
+    <p>Pénalité estimée (1,5 × {{ detail().location.prixJournalierApplique }} DT × jours de retard) :
+      <b>{{ penaliteEstimee() | number: '1.2-2' }} DT</b></p>
+    <p>Total estimé : <b>{{ detail().location.montantTotal + penaliteEstimee() | number: '1.2-2' }} DT</b></p>
+
+    <button (click)="valider()">Valider le retour</button>
+  </div>
+}
+
+<!-- Récapitulatif final imprimable -->
+@if (resultat() && detail()) {
+  <div class="box">
+    <h2>Récapitulatif de la location n° {{ resultat().id }}</h2>
+    <table>
+      <tr><td>Client</td><td>{{ detail().client?.prenom }} {{ detail().client?.nom }} (CIN {{ detail().client?.cin }})</td></tr>
+      <tr><td>Véhicule</td><td>{{ detail().vehicule?.marque }} {{ detail().vehicule?.modele }} – {{ detail().vehicule?.immatriculation }}</td></tr>
+      <tr><td>Période prévue</td><td>{{ resultat().dateDebut }} → {{ resultat().dateFinPrevue }} ({{ resultat().nombreJours }} jours)</td></tr>
+      <tr><td>Retour effectif</td><td>{{ resultat().dateRetourEffectif }}</td></tr>
+      <tr><td>Kilométrage</td><td>{{ resultat().kmDepart }} → {{ resultat().kmRetour }} km ({{ (resultat().kmRetour ?? 0) - (resultat().kmDepart ?? 0) }} km parcourus)</td></tr>
+      <tr><td>Prix journalier appliqué</td><td>{{ resultat().prixJournalierApplique | number: '1.2-2' }} DT</td></tr>
+      <tr><td>Remise fidélité</td><td>- {{ resultat().remise | number: '1.2-2' }} DT</td></tr>
+      <tr><td>Pénalité de retard</td><td>{{ resultat().penalite | number: '1.2-2' }} DT</td></tr>
+      <tr><th>Total à payer</th><th>{{ resultat().montantTotal | number: '1.2-2' }} DT</th></tr>
+    </table>
+    <br />
+    <button class="no-print" (click)="imprimer()">🖨 Imprimer</button>
+  </div>
+}

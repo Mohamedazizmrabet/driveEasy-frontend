@@ -1,0 +1,54 @@
+<a routerLink="/clients">← Retour aux clients</a>
+
+@if (erreur()) {
+  <div class="error">{{ erreur() }}</div>
+}
+
+@if (client()) {
+  <h1>{{ client().prenom }} {{ client().nom }} <span class="badge badge-{{ client().categorieClient }}">{{ client().categorieClient }}</span></h1>
+
+  <div class="box">
+    <h2>Informations</h2>
+    <p><b>CIN :</b> {{ client().cin }}</p>
+    <p><b>Né(e) le :</b> {{ client().dateNaissance }} ({{ client().age }} ans)</p>
+    <p><b>Email :</b> {{ client().email }}</p>
+    <p><b>Téléphone :</b> {{ client().telephone }}</p>
+    <p><b>Adresse :</b> {{ client().adresse }}</p>
+    <p><b>Permis :</b> {{ client().numeroPermis }}, expire le {{ client().dateExpirationPermis }}</p>
+    <p><b>Inscrit le :</b> {{ client().dateInscription }}</p>
+  </div>
+
+  @if (eligibilite()) {
+    @if (eligibilite().eligible) {
+      <div class="success">✔ Ce client peut louer un véhicule.</div>
+    } @else {
+      <div class="error">
+        ✘ Ce client ne peut pas louer :
+        <ul>
+          @for (m of eligibilite().motifs; track m) { <li>{{ m }}</li> }
+        </ul>
+      </div>
+    }
+  }
+
+  <h2>Historique des locations ({{ locations().length }})</h2>
+  <table>
+    <thead>
+      <tr><th>N°</th><th>Véhicule</th><th>Du</th><th>Au</th><th>Montant</th><th>Statut</th></tr>
+    </thead>
+    <tbody>
+      @for (l of locations(); track l.id) {
+        <tr>
+          <td>{{ l.id }}</td>
+          <td>#{{ l.vehiculeId }}</td>
+          <td>{{ l.dateDebut }}</td>
+          <td>{{ l.dateRetourEffectif || l.dateFinPrevue }}</td>
+          <td>{{ l.montantTotal | number: '1.2-2' }} DT</td>
+          <td><span class="badge badge-{{ l.statut }}">{{ l.statut }}</span></td>
+        </tr>
+      } @empty {
+        <tr><td colspan="6">Aucune location.</td></tr>
+      }
+    </tbody>
+  </table>
+}

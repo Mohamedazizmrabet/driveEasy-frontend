@@ -1,0 +1,74 @@
+<div class="toolbar">
+  <h1>Locations</h1>
+  <a class="btn" routerLink="/locations/new">+ Nouvelle location</a>
+</div>
+
+<div class="filters box">
+  <div>
+    <label>Statut</label>
+    <select [(ngModel)]="statut">
+      <option value="">Tous</option>
+      <option value="RESERVEE">Réservée</option>
+      <option value="EN_COURS">En cours</option>
+      <option value="TERMINEE">Terminée</option>
+      <option value="ANNULEE">Annulée</option>
+    </select>
+  </div>
+  <div>
+    <label>Du</label>
+    <input type="date" [(ngModel)]="dateDebut" />
+  </div>
+  <div>
+    <label>Au</label>
+    <input type="date" [(ngModel)]="dateFin" />
+  </div>
+  <button (click)="filtrer()">Filtrer</button>
+</div>
+
+@if (erreur()) {
+  <div class="error">{{ erreur() }}</div>
+}
+@if (message()) {
+  <div class="success">{{ message() }}</div>
+}
+
+@if (resultat()) {
+  <table>
+    <thead>
+      <tr>
+        <th>N°</th><th>Client</th><th>Véhicule</th><th>Du</th><th>Au (prévu)</th>
+        <th>Montant</th><th>Statut</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (l of resultat().content; track l.id) {
+        <tr>
+          <td>{{ l.id }}</td>
+          <td><a [routerLink]="['/clients', l.clientId]">Client #{{ l.clientId }}</a></td>
+          <td>#{{ l.vehiculeId }}</td>
+          <td>{{ l.dateDebut }}</td>
+          <td>{{ l.dateFinPrevue }}</td>
+          <td>{{ l.montantTotal | number: '1.2-2' }} DT</td>
+          <td><span class="badge badge-{{ l.statut }}">{{ l.statut }}</span></td>
+          <td>
+            @if (l.statut === 'RESERVEE') {
+              <button class="btn-success" (click)="depart(l)">Départ</button>
+              <button class="btn-danger" (click)="annuler(l)">Annuler</button>
+            }
+            @if (l.statut === 'EN_COURS') {
+              <a class="btn" [routerLink]="['/locations', l.id, 'retour']">Retour</a>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="8">Aucune location.</td></tr>
+      }
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button [disabled]="page === 0" (click)="changerPage(page - 1)">Précédent</button>
+    <span>Page {{ page + 1 }} / {{ resultat().totalPages || 1 }} ({{ resultat().totalElements }} locations)</span>
+    <button [disabled]="page + 1 >= resultat().totalPages" (click)="changerPage(page + 1)">Suivant</button>
+  </div>
+}

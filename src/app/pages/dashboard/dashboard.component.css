@@ -1,0 +1,12 @@
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.card { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 14px; }
+.card span { display: block; font-size: 13px; color: #666; }
+.card strong { font-size: 24px; }
+.vert { color: #27ae60; }
+.orange { color: #e67e22; }
+.rouge { color: #c0392b; }
+.graphs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.bar-line { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 13px; }
+.bar-label { width: 150px; }
+.bar-bg { flex: 1; background: #eee; height: 16px; border-radius: 3px; }
+.bar { height: 16px; border-radius: 3px; }

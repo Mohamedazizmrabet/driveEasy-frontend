@@ -1,0 +1,12 @@
+<header class="navbar">
+  <span class="logo">DriveEasy</span>
+  <a routerLink="/dashboard" routerLinkActive="active">Tableau de bord</a>
+  <a routerLink="/vehicules" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Véhicules</a>
+  <a routerLink="/clients" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Clients</a>
+  <a routerLink="/locations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Locations</a>
+  <a routerLink="/locations/new" routerLinkActive="active" class="btn-nav">+ Nouvelle location</a>
+</header>
+
+<main class="container">
+  <router-outlet />
+</main>

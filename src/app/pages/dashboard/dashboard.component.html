@@ -1,0 +1,56 @@
+<h1>Tableau de bord</h1>
+
+@if (erreur()) {
+  <div class="error">{{ erreur() }}</div>
+}
+
+@if (stats()) {
+  <div class="cards">
+    <div class="card"><span>Véhicules disponibles</span><strong class="vert">{{ nbVehicules('DISPONIBLE') }}</strong></div>
+    <div class="card"><span>Véhicules loués</span><strong class="orange">{{ nbVehicules('LOUE') }}</strong></div>
+    <div class="card"><span>En maintenance</span><strong class="rouge">{{ nbVehicules('MAINTENANCE') }}</strong></div>
+    <div class="card"><span>Locations en cours</span><strong>{{ nbLocations('EN_COURS') }}</strong></div>
+    <div class="card"><span>Chiffre d'affaires du mois</span><strong>{{ stats().chiffreAffairesMois | number: '1.2-2' }} DT</strong></div>
+    <div class="card"><span>Taux d'occupation</span><strong>{{ stats().tauxOccupation ?? 0 }} %</strong></div>
+  </div>
+
+  <div class="graphs">
+    <div class="box">
+      <h2>État du parc</h2>
+      @for (s of ['DISPONIBLE', 'LOUE', 'MAINTENANCE']; track s) {
+        <div class="bar-line">
+          <span class="bar-label">{{ s }}</span>
+          <div class="bar-bg"><div class="bar badge-{{ s }}" [style.width.%]="largeur(nbVehicules(s), stats.totalVehicules ?? 0)"></div></div>
+          <span>{{ nbVehicules(s) }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="box">
+      <h2>Locations par statut</h2>
+      @for (s of ['RESERVEE', 'EN_COURS', 'TERMINEE', 'ANNULEE']; track s) {
+        <div class="bar-line">
+          <span class="bar-label">{{ s }}</span>
+          <div class="bar-bg"><div class="bar badge-{{ s }}" [style.width.%]="largeur(nbLocations(s), stats.nombreLocations)"></div></div>
+          <span>{{ nbLocations(s) }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="box">
+    <h2>Véhicules les plus loués</h2>
+    @for (v of stats().topVehicules; track v.vehiculeId) {
+      <div class="bar-line">
+        <span class="bar-label">{{ v.libelle }}</span>
+        <div class="bar-bg"><div class="bar badge-RESERVEE" [style.width.%]="largeur(v.nombreLocations, maxTop())"></div></div>
+        <span>{{ v.nombreLocations }} loc.</span>
+      </div>
+    }
+    <p>Chiffre d'affaires total : <b>{{ stats().chiffreAffaires | number: '1.2-2' }} DT</b></p>
+  </div>
+
+  <a class="btn" routerLink="/locations/new">+ Nouvelle location</a>
+} @else if (!erreur()) {
+  <p>Chargement...</p>
+}

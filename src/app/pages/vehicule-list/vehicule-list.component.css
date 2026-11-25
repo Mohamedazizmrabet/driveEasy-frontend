@@ -1,0 +1,8 @@
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.vcard { background: #fff; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
+.vcard img { width: 100%; height: 140px; object-fit: cover; background: #ddd; }
+.vcard-body { padding: 12px; }
+.vcard h3 { margin: 0 0 6px; font-size: 16px; }
+.vcard p { margin: 4px 0; font-size: 13px; color: #555; }
+.vcard .prix { font-size: 16px; font-weight: bold; color: #1f4e79; }
+.actions { display: flex; gap: 8px; margin-top: 10px; }

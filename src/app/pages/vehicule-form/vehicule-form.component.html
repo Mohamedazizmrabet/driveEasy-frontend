@@ -1,0 +1,108 @@
+<h1>{{ id ? 'Modifier le véhicule' : 'Nouveau véhicule' }}</h1>
+
+@if (erreur()) {
+  <div class="error">{{ erreur() }}</div>
+}
+
+<form class="box" [formGroup]="form" (ngSubmit)="enregistrer()">
+  <div class="form-row">
+    <div class="form-group">
+      <label>Immatriculation *</label>
+      <input formControlName="immatriculation" placeholder="123 TU 4567" />
+      @if (invalide('immatriculation')) { <div class="field-error">Obligatoire</div> }
+    </div>
+    <div class="form-group">
+      <label>Couleur</label>
+      <input formControlName="couleur" />
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Marque *</label>
+      <input formControlName="marque" />
+      @if (invalide('marque')) { <div class="field-error">Obligatoire</div> }
+    </div>
+    <div class="form-group">
+      <label>Modèle *</label>
+      <input formControlName="modele" />
+      @if (invalide('modele')) { <div class="field-error">Obligatoire</div> }
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Année *</label>
+      <input type="number" formControlName="annee" />
+      @if (invalide('annee')) { <div class="field-error">Entre 1990 et {{ anneeMax }}</div> }
+    </div>
+    <div class="form-group">
+      <label>Catégorie *</label>
+      <select formControlName="categorie">
+        <option value="ECONOMIQUE">Économique</option>
+        <option value="COMPACTE">Compacte</option>
+        <option value="BERLINE">Berline</option>
+        <option value="SUV">SUV</option>
+        <option value="LUXE">Luxe</option>
+        <option value="UTILITAIRE">Utilitaire</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Carburant *</label>
+      <select formControlName="carburant">
+        <option value="ESSENCE">Essence</option>
+        <option value="DIESEL">Diesel</option>
+        <option value="HYBRIDE">Hybride</option>
+        <option value="ELECTRIQUE">Électrique</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Boîte *</label>
+      <select formControlName="boite">
+        <option value="MANUELLE">Manuelle</option>
+        <option value="AUTOMATIQUE">Automatique</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Nombre de places *</label>
+      <input type="number" formControlName="nbPlaces" />
+      @if (invalide('nbPlaces')) { <div class="field-error">Entre 1 et 9</div> }
+    </div>
+    <div class="form-group">
+      <label>Kilométrage *</label>
+      <input type="number" formControlName="kilometrage" />
+      @if (invalide('kilometrage')) { <div class="field-error">Doit être positif</div> }
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Prix journalier (DT) *</label>
+      <input type="number" formControlName="prixJournalier" />
+      @if (invalide('prixJournalier')) { <div class="field-error">Doit être strictement positif</div> }
+    </div>
+    <div class="form-group">
+      <label>Statut</label>
+      <!-- LOUE est géré automatiquement par les locations (départ / retour) -->
+      <select formControlName="statut">
+        <option value="DISPONIBLE">Disponible</option>
+        <option value="MAINTENANCE">Maintenance</option>
+        @if (form.value.statut === 'LOUE') { <option value="LOUE">Loué</option> }
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>URL de l'image</label>
+    <input formControlName="imageUrl" placeholder="https://..." />
+  </div>
+
+  <button type="submit">Enregistrer</button>
+  <a class="btn btn-light" routerLink="/vehicules">Annuler</a>
+</form>

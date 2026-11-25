@@ -1,0 +1,61 @@
+<div class="toolbar">
+  <h1>Catalogue des véhicules</h1>
+  <a class="btn" routerLink="/vehicules/new">+ Ajouter un véhicule</a>
+</div>
+
+<div class="filters box">
+  <div>
+    <label>Carburant</label>
+    <select [(ngModel)]="carburant" (change)="charger()">
+      <option value="">Tous</option>
+      <option value="ESSENCE">Essence</option>
+      <option value="DIESEL">Diesel</option>
+      <option value="HYBRIDE">Hybride</option>
+      <option value="ELECTRIQUE">Électrique</option>
+    </select>
+  </div>
+  <div>
+    <label>Prix max / jour (DT)</label>
+    <input type="number" [(ngModel)]="prixMax" placeholder="ex: 150" />
+  </div>
+  <button (click)="charger()">Filtrer</button>
+  <div>
+    <label>Trier par</label>
+    <select [(ngModel)]="tri">
+      <option value="marque">Marque</option>
+      <option value="prixAsc">Prix croissant</option>
+      <option value="prixDesc">Prix décroissant</option>
+    </select>
+  </div>
+</div>
+
+@if (erreur()) {
+  <div class="error">{{ erreur() }}</div>
+}
+
+<div class="grid">
+  @for (v of vehiculesAffiches(); track v.id) {
+    <div class="vcard">
+      <img [src]="v.imageUrl || 'https://placehold.co/600x400?text=DriveEasy'" [alt]="v.marque + ' ' + v.modele" />
+      <div class="vcard-body">
+        <h3>{{ v.marque }} {{ v.modele }}</h3>
+        <p>{{ v.immatriculation }} · {{ v.annee }} · {{ v.carburant }} · {{ v.boite }}</p>
+        <p>{{ v.nbPlaces }} places · {{ v.kilometrage }} km</p>
+        <p class="prix">{{ v.prixJournalier }} DT / jour</p>
+        <span class="badge badge-{{ v.statut }}">{{ v.statut }}</span>
+        <div class="actions">
+          <a class="btn btn-light" [routerLink]="['/vehicules', v.id, 'edit']">Modifier</a>
+          <button class="btn-danger" (click)="supprimer(v)">Supprimer</button>
+        </div>
+      </div>
+    </div>
+  } @empty {
+    <p>Aucun véhicule trouvé.</p>
+  }
+</div>
+
+<div class="pagination">
+  <button [disabled]="page === 1" (click)="page = page - 1">Précédent</button>
+  <span>Page {{ page }} / {{ nbPages() }}</span>
+  <button [disabled]="page === nbPages()" (click)="page = page + 1">Suivant</button>
+</div>

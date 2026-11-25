@@ -1,0 +1,66 @@
+<h1>Nouveau client</h1>
+
+@if (erreur()) {
+  <div class="error">{{ erreur() }}</div>
+}
+
+<form class="box" [formGroup]="form" (ngSubmit)="enregistrer()">
+  <div class="form-row">
+    <div class="form-group">
+      <label>Nom *</label>
+      <input formControlName="nom" />
+      @if (invalide('nom')) { <div class="field-error">Obligatoire</div> }
+    </div>
+    <div class="form-group">
+      <label>Prénom *</label>
+      <input formControlName="prenom" />
+      @if (invalide('prenom')) { <div class="field-error">Obligatoire</div> }
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>CIN *</label>
+      <input formControlName="cin" placeholder="8 chiffres" />
+      @if (invalide('cin')) { <div class="field-error">Le CIN doit contenir 8 chiffres</div> }
+    </div>
+    <div class="form-group">
+      <label>Date de naissance *</label>
+      <input type="date" formControlName="dateNaissance" />
+      @if (invalide('dateNaissance')) { <div class="field-error">Obligatoire</div> }
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Email *</label>
+      <input formControlName="email" />
+      @if (invalide('email')) { <div class="field-error">Email invalide</div> }
+    </div>
+    <div class="form-group">
+      <label>Téléphone</label>
+      <input formControlName="telephone" placeholder="+216 20 000 000" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Adresse</label>
+    <input formControlName="adresse" />
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Numéro de permis *</label>
+      <input formControlName="numeroPermis" />
+      @if (invalide('numeroPermis')) { <div class="field-error">Obligatoire</div> }
+    </div>
+    <div class="form-group">
+      <label>Expiration du permis *</label>
+      <input type="date" formControlName="dateExpirationPermis" />
+      @if (invalide('dateExpirationPermis')) { <div class="field-error">Obligatoire</div> }
+    </div>
+  </div>
+
+  <button type="submit">Enregistrer</button>
+  <a class="btn btn-light" routerLink="/clients">Annuler</a>
+</form>
